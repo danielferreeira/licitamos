@@ -1,0 +1,26 @@
+name: Robô de Licitações
+
+on:
+  schedule:
+    - cron: '0 11 * * *' # Roda todo dia as 08:00 BRT (11:00 UTC)
+  workflow_dispatch: # Permite rodar manual clicando no botão
+
+jobs:
+  coleta:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Instalar bibliotecas
+        run: |
+          pip install requests supabase
+
+      - name: Rodar Coleta
+        run: python coleta_diaria.py
