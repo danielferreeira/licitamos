@@ -3,15 +3,45 @@ import { supabase } from './supabaseClient'
 import {
   Paperclip, Download, Search, MapPin, Building2, Calendar, ExternalLink,
   Briefcase, Star, XCircle, X, FileText, MessageCircle, Clock, AlertTriangle,
-  Plus, Trash2, User, ChevronDown, Users
+  Plus, Trash2, User, ChevronDown
 } from 'lucide-react'
 
-// --- COMPONENTES VISUAIS (Badge, Highlighter, etc) ---
-const PrazoBadge = ({ dataAbertura }) => {
+// --- DEFINIÇÕES DE TIPOS (Para o TypeScript não reclamar) ---
+interface Arquivo {
+  titulo: string;
+  url: string;
+}
+
+interface Licitacao {
+  id: number;
+  titulo: string;
+  descricao: string;
+  orgao: string;
+  valor: number;
+  uf: string;
+  municipio: string;
+  data_publicacao: string;
+  data_abertura: string | null;
+  modalidade_id: number;
+  link_edital: string | null;
+  favorito: boolean;
+  status: string;
+  cliente_id: number | null;
+  arquivos: Arquivo[];
+}
+
+interface Cliente {
+  id: number;
+  nome: string;
+}
+
+// --- COMPONENTES VISUAIS ---
+
+const PrazoBadge = ({ dataAbertura }: { dataAbertura: string | null }) => {
   if (!dataAbertura) return null
   const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
   const dataLimite = new Date(dataAbertura)
-  const diffTime = dataLimite - hoje
+  const diffTime = dataLimite.getTime() - hoje.getTime()
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
   let cor = "bg-slate-100 text-slate-500 border-slate-200"
@@ -26,36 +56,40 @@ const PrazoBadge = ({ dataAbertura }) => {
   return <span className={`px-2 py-0.5 rounded text-xs border flex items-center gap-1 ${cor}`}>{icone} {texto}</span>
 }
 
-const Highlighter = ({ text, highlight }) => {
+const Highlighter = ({ text, highlight }: { text: string | null, highlight: string }) => {
   if (!text) return null
   if (!highlight || highlight.length < 2) return <span>{text}</span>
   const parts = text.split(new RegExp(`(${highlight})`, 'gi'))
   return <span>{parts.map((part, i) => part.toLowerCase() === highlight.toLowerCase() ? <span key={i} className="bg-yellow-200 text-yellow-900 font-bold px-0.5 rounded shadow-sm">{part}</span> : <span key={i}>{part}</span>)}</span>
 }
 
-const Badge = ({ type }) => {
-  const colors = { 6: 'bg-blue-50 text-blue-700 border-blue-200', 8: 'bg-purple-50 text-purple-700 border-purple-200', 13: 'bg-indigo-50 text-indigo-700 border-indigo-200', default: 'bg-slate-50 text-slate-600 border-slate-200' }
-  const labels = { 6: 'Pregão', 8: 'Dispensa', 13: 'Concorrência' }
-  return <span className={`px-2 py-0.5 rounded text-xs font-semibold border ${colors[type] || colors.default}`}>{labels[type] || 'Outros'}</span>
+const Badge = ({ type }: { type: number }) => {
+  const colors: Record<number, string> = { 6: 'bg-blue-50 text-blue-700 border-blue-200', 8: 'bg-purple-50 text-purple-700 border-purple-200', 13: 'bg-indigo-50 text-indigo-700 border-indigo-200' }
+  const defaultColor = 'bg-slate-50 text-slate-600 border-slate-200'
+  const labels: Record<number, string> = { 6: 'Pregão', 8: 'Dispensa', 13: 'Concorrência' }
+  return <span className={`px-2 py-0.5 rounded text-xs font-semibold border ${colors[type] || defaultColor}`}>{labels[type] || 'Outros'}</span>
 }
 
-// --- WIDGET AGENDA (Filtrado por Cliente) ---
-const AgendaWidget = ({ licitacoes, clienteAtual }) => {
+// --- WIDGET AGENDA ---
+const AgendaWidget = ({ licitacoes, clienteAtual }: { licitacoes: Licitacao[], clienteAtual: Cliente | null }) => {
   const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
   const proximas = licitacoes
     .filter(l => {
       if (!l.data_abertura) return false
       const dataItem = new Date(l.data_abertura)
-      // Só mostra se for futuro, favorito E do cliente atual
-      return dataItem >= hoje && l.favorito && l.cliente_id === clienteAtual?.id
+      // Só mostra se for futuro, favorito E do cliente atual (se houver cliente selecionado)
+      const isFuturo = dataItem >= hoje
+      const isFavorito = l.favorito
+      const isDoCliente = clienteAtual ? l.cliente_id === clienteAtual.id : true
+      return isFuturo && isFavorito && isDoCliente
     })
-    .sort((a, b) => new Date(a.data_abertura) - new Date(b.data_abertura))
+    .sort((a, b) => new Date(a.data_abertura!).getTime() - new Date(b.data_abertura!).getTime())
     .slice(0, 10)
 
   return (
     <div className="bg-white border-l border-slate-200 w-80 p-6 hidden lg:block overflow-y-auto shrink-0 transition-all">
       <h3 className="font-bold text-slate-700 mb-2 flex items-center gap-2"><Calendar size={20} className="text-blue-600" /> Agenda do Cliente</h3>
-      <p className="text-xs text-slate-400 mb-6 border-b border-slate-100 pb-2">Visualizando: {clienteAtual?.nome}</p>
+      <p className="text-xs text-slate-400 mb-6 border-b border-slate-100 pb-2">Visualizando: {clienteAtual?.nome || 'Geral'}</p>
 
       {proximas.length === 0 ? (
         <div className="text-center p-6 bg-slate-50 rounded-xl border border-dashed border-slate-300">
@@ -69,7 +103,7 @@ const AgendaWidget = ({ licitacoes, clienteAtual }) => {
               <div className="absolute left-1.5 top-1.5 w-4 h-4 rounded-full border-2 border-white bg-amber-500 shadow-sm z-10 group-hover:bg-amber-600 transition-colors"></div>
               <div className="p-3 bg-white rounded-lg border border-slate-100 shadow-sm hover:shadow-md hover:border-amber-200 transition-all">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs font-bold text-blue-600 uppercase">{new Date(item.data_abertura).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span>
+                  <span className="text-xs font-bold text-blue-600 uppercase">{item.data_abertura ? new Date(item.data_abertura).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) : ''}</span>
                   <Badge type={item.modalidade_id} />
                 </div>
                 <p className="text-sm font-semibold text-slate-700 line-clamp-2 leading-snug mb-1" title={item.titulo}>{item.titulo}</p>
@@ -83,16 +117,37 @@ const AgendaWidget = ({ licitacoes, clienteAtual }) => {
 }
 
 // --- MODAL DETALHES ---
-const ModalDetalhes = ({ licitacao, termoBusca, onClose, onUpdateStatus, clienteAtual }) => {
+const ModalDetalhes = ({ licitacao, termoBusca, onClose, onUpdateStatus, clienteAtual }: { licitacao: Licitacao, termoBusca: string, onClose: () => void, onUpdateStatus: (id: number, status: string, favorito?: boolean) => void, clienteAtual: Cliente | null }) => {
   const [tab, setTab] = useState('detalhes')
 
   const enviarWhatsapp = () => {
     const v = licitacao.valor > 0 ? licitacao.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Sigiloso'
-    const msg = `🏛️ *Oportunidade para ${clienteAtual?.nome}*\n${licitacao.titulo}\n💰 ${v}\n🔗 ${licitacao.link_edital || ''}`
+    const msg = `🏛️ *Oportunidade para ${clienteAtual?.nome || 'Análise'}*\n${licitacao.titulo}\n💰 ${v}\n🔗 ${licitacao.link_edital || ''}`
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
   }
 
-  if (!licitacao) return null;
+  // --- TAB PROPOSTA (Interno) ---
+  const TabProposta = () => {
+    const [itens, setItens] = useState([{ id: 1, desc: '', qtd: 1, valor: 0 }])
+    const addItem = () => setItens([...itens, { id: Date.now(), desc: '', qtd: 1, valor: 0 }])
+    const removeItem = (id: number) => setItens(itens.filter(i => i.id !== id))
+    const total = itens.reduce((acc, i) => acc + (i.qtd * i.valor), 0)
+
+    return (
+      <div className="space-y-4">
+        <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 flex justify-between items-center">
+          <div><p className="text-xs text-blue-600 font-bold uppercase">Valor Proposta</p><p className="text-2xl font-bold text-slate-800">{total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p></div>
+          <button onClick={addItem} className="flex items-center gap-1 bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-bold hover:bg-blue-700"><Plus size={16} /> Add Item</button>
+        </div>
+        <div className="border border-slate-200 rounded-lg overflow-hidden">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200"><tr><th className="p-3">Item</th><th className="p-3 w-20">Qtd</th><th className="p-3 w-32">Unit.</th><th className="p-3 w-32">Subtotal</th><th className="p-3 w-10"></th></tr></thead>
+            <tbody className="divide-y divide-slate-100">{itens.map(item => (<tr key={item.id} className="group hover:bg-slate-50"><td className="p-2"><input type="text" placeholder="Descrição" className="w-full bg-transparent outline-none" value={item.desc} onChange={e => { const n = [...itens]; n.find(i => i.id === item.id)!.desc = e.target.value; setItens(n) }} /></td><td className="p-2"><input type="number" className="w-full bg-transparent outline-none" value={item.qtd} onChange={e => { const n = [...itens]; n.find(i => i.id === item.id)!.qtd = Number(e.target.value); setItens(n) }} /></td><td className="p-2"><input type="number" className="w-full bg-transparent outline-none" value={item.valor} onChange={e => { const n = [...itens]; n.find(i => i.id === item.id)!.valor = Number(e.target.value); setItens(n) }} /></td><td className="p-2 font-medium text-slate-700">{(item.qtd * item.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td><td className="p-2 text-center"><button onClick={() => removeItem(item.id)} className="text-slate-300 hover:text-red-500"><Trash2 size={16} /></button></td></tr>))}</tbody>
+          </table>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all">
@@ -101,7 +156,6 @@ const ModalDetalhes = ({ licitacao, termoBusca, onClose, onUpdateStatus, cliente
           <div className="pr-8 flex-1">
             <div className="flex gap-2 mb-3">
               <PrazoBadge dataAbertura={licitacao.data_abertura} /><Badge type={licitacao.modalidade_id} />
-              {/* Badge do Cliente Dono */}
               {licitacao.favorito && licitacao.cliente_id && (
                 <span className="px-2 py-0.5 rounded text-xs border border-amber-200 bg-amber-50 text-amber-700 font-bold flex items-center gap-1">
                   <User size={10} /> {clienteAtual?.id === licitacao.cliente_id ? 'Meu Processo' : 'Outro Cliente'}
@@ -118,6 +172,7 @@ const ModalDetalhes = ({ licitacao, termoBusca, onClose, onUpdateStatus, cliente
         <div className="flex border-b border-slate-200 px-6">
           <button onClick={() => setTab('detalhes')} className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${tab === 'detalhes' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>Visão Geral</button>
           <button onClick={() => setTab('arquivos')} className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${tab === 'arquivos' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>Arquivos ({licitacao.arquivos?.length || 0})</button>
+          <button onClick={() => setTab('proposta')} className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${tab === 'proposta' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>Elaborar Proposta</button>
         </div>
 
         <div className="p-6 overflow-y-auto min-h-[200px]">
@@ -136,6 +191,7 @@ const ModalDetalhes = ({ licitacao, termoBusca, onClose, onUpdateStatus, cliente
               {(!licitacao.arquivos || licitacao.arquivos.length === 0) && <p className="text-center text-slate-400 italic py-10">Arquivos não hospedados no PNCP.</p>}
             </div>
           )}
+          {tab === 'proposta' && <TabProposta />}
         </div>
 
         <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-between items-center">
@@ -145,7 +201,7 @@ const ModalDetalhes = ({ licitacao, termoBusca, onClose, onUpdateStatus, cliente
               className={`px-4 py-2 rounded-lg border text-sm font-bold flex items-center gap-2 transition-all ${licitacao.favorito ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-white text-slate-500 hover:border-amber-400 hover:text-amber-600'}`}
             >
               <Star size={16} fill={licitacao.favorito ? "currentColor" : "none"} />
-              {licitacao.favorito ? `Salvo em ${clienteAtual?.nome}` : 'Favoritar'}
+              {licitacao.favorito ? 'Favorito' : 'Favoritar'}
             </button>
             <button onClick={() => { onUpdateStatus(licitacao.id, 'descartado'); onClose(); }} className="px-4 py-2 rounded-lg border border-slate-200 bg-white text-slate-500 hover:text-red-600 hover:bg-red-50 text-sm font-bold flex items-center gap-2"><XCircle size={16} /> Descartar</button>
           </div>
@@ -161,47 +217,42 @@ const ModalDetalhes = ({ licitacao, termoBusca, onClose, onUpdateStatus, cliente
 
 // --- APP PRINCIPAL ---
 function App() {
-  const [licitacoes, setLicitacoes] = useState([])
+  const [licitacoes, setLicitacoes] = useState<Licitacao[]>([])
   const [loading, setLoading] = useState(true)
-  const [modalOpen, setModalOpen] = useState(null)
+  const [modalOpen, setModalOpen] = useState<Licitacao | null>(null)
 
-  // Estados de Gestão de Clientes
-  const [clientes, setClientes] = useState([])
-  const [clienteAtual, setClienteAtual] = useState(null)
+  const [clientes, setClientes] = useState<Cliente[]>([])
+  const [clienteAtual, setClienteAtual] = useState<Cliente | null>(null)
 
   const [busca, setBusca] = useState('')
   const [filtroUf, setFiltroUf] = useState('')
   const [filtroStatus, setFiltroStatus] = useState('novo')
   const [filtroValorMin, setFiltroValorMin] = useState('')
 
-  // 1. Carrega Clientes ao iniciar
   useEffect(() => {
     async function fetchClientes() {
       const { data } = await supabase.from('clientes').select('*').order('id')
       if (data && data.length > 0) {
         setClientes(data)
-        setClienteAtual(data[0]) // Seleciona o primeiro automaticamente
+        setClienteAtual(data[0])
       } else {
-        // Se não tiver nenhum, cria um local de fallback
         setClientes([{ id: 0, nome: 'Minha Consultoria' }])
       }
     }
     fetchClientes()
   }, [])
 
-  // 2. Adicionar Novo Cliente
   const adicionarCliente = async () => {
     const nome = window.prompt("Nome do novo cliente (Empresa):")
     if (nome) {
-      const { data, error } = await supabase.from('clientes').insert([{ nome }]).select()
+      const { data } = await supabase.from('clientes').insert([{ nome }]).select()
       if (data) {
         setClientes([...clientes, data[0]])
-        setClienteAtual(data[0]) // Já muda para o novo
+        setClienteAtual(data[0])
       }
     }
   }
 
-  // 3. Carrega Licitações
   async function carregarDados() {
     setLoading(true)
     let query = supabase.from('licitacoes').select('*').order('data_publicacao', { ascending: false }).limit(100)
@@ -212,7 +263,6 @@ function App() {
 
     if (filtroStatus === 'favoritos') {
       query = query.eq('favorito', true)
-      // SE FOR FAVORITOS, MOSTRA SÓ OS DO CLIENTE ATUAL
       if (clienteAtual?.id) query = query.eq('cliente_id', clienteAtual.id)
     }
     else if (filtroStatus === 'descartados') query = query.eq('status', 'descartado')
@@ -226,30 +276,28 @@ function App() {
   useEffect(() => {
     const t = setTimeout(carregarDados, 300);
     return () => clearTimeout(t)
-  }, [busca, filtroUf, filtroStatus, filtroValorMin, clienteAtual]) // Recarrega se mudar o cliente
+  }, [busca, filtroUf, filtroStatus, filtroValorMin, clienteAtual])
 
-  const atualizarStatus = async (id, novoStatus, favorito = null) => {
+  const atualizarStatus = async (id: number, novoStatus: string, favorito: boolean | null = null) => {
     setLicitacoes(prev => {
       const newList = prev.map(item => item.id === id ? {
         ...item,
         status: novoStatus,
         favorito: favorito !== null ? favorito : item.favorito,
-        cliente_id: favorito ? clienteAtual?.id : null // Vincula ao cliente atual se favoritar
+        cliente_id: favorito ? (clienteAtual?.id || null) : null
       } : item)
       if (novoStatus === 'descartado' && filtroStatus !== 'descartados') return newList.filter(item => item.id !== id)
-      // Se estou vendo favoritos de um cliente e desfavorito, remove da tela
       if (filtroStatus === 'favoritos' && !favorito) return newList.filter(item => item.id !== id)
       return newList
     })
 
     if (modalOpen && modalOpen.id === id) {
-      setModalOpen(prev => ({ ...prev, status: novoStatus, favorito: favorito !== null ? favorito : prev.favorito }))
+      setModalOpen(prev => prev ? ({ ...prev, status: novoStatus, favorito: favorito !== null ? favorito : prev.favorito }) : null)
     }
 
-    const updates = { status: novoStatus }
+    const updates: any = { status: novoStatus }
     if (favorito !== null) {
       updates.favorito = favorito
-      // Salva o ID do cliente no banco
       updates.cliente_id = favorito ? clienteAtual?.id : null
     }
     await supabase.from('licitacoes').update(updates).eq('id', id)
@@ -263,7 +311,6 @@ function App() {
           <h1 className="font-bold text-xl tracking-tight text-slate-800">Licitamos <span className="text-blue-600">Pro</span></h1>
         </div>
 
-        {/* --- SELETOR DE CLIENTES (NOVIDADE) --- */}
         <div className="px-4 pt-4 pb-0">
           <p className="px-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Carteira de Clientes</p>
           <div className="flex gap-2">
@@ -271,7 +318,7 @@ function App() {
               <select
                 className="w-full p-2 bg-slate-50 border border-slate-200 rounded-md text-sm font-bold text-slate-700 outline-none appearance-none cursor-pointer hover:border-blue-300 focus:ring-2 focus:ring-blue-100 transition-all"
                 value={clienteAtual?.id || ''}
-                onChange={(e) => setClienteAtual(clientes.find(c => c.id == e.target.value))}
+                onChange={(e) => setClienteAtual(clientes.find(c => c.id === Number(e.target.value)) || null)}
               >
                 {clientes.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
               </select>
@@ -325,7 +372,6 @@ function App() {
             {licitacoes.map((item) => (
               <div key={item.id} onClick={() => setModalOpen(item)} className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 cursor-pointer hover:border-blue-300 transition-all relative">
 
-                {/* SELO DE CLIENTE NO CARD SE FOR FAVORITO */}
                 {item.favorito && item.cliente_id === clienteAtual?.id && (
                   <div className="absolute top-0 right-0 bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-1 rounded-bl-lg border-b border-l border-amber-200">
                     {clienteAtual?.nome}
