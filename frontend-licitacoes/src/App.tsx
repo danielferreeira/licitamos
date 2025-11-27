@@ -6,7 +6,7 @@ import {
   Plus, Trash2, User, ChevronDown
 } from 'lucide-react'
 
-// --- DEFINIÇÕES DE TIPOS (Para o TypeScript não reclamar) ---
+// --- 1. DEFINIÇÕES DE TIPOS (Correção dos erros de build) ---
 interface Arquivo {
   titulo: string;
   url: string;
@@ -35,7 +35,7 @@ interface Cliente {
   nome: string;
 }
 
-// --- COMPONENTES VISUAIS ---
+// --- 2. COMPONENTES VISUAIS ---
 
 const PrazoBadge = ({ dataAbertura }: { dataAbertura: string | null }) => {
   if (!dataAbertura) return null
@@ -56,7 +56,7 @@ const PrazoBadge = ({ dataAbertura }: { dataAbertura: string | null }) => {
   return <span className={`px-2 py-0.5 rounded text-xs border flex items-center gap-1 ${cor}`}>{icone} {texto}</span>
 }
 
-const Highlighter = ({ text, highlight }: { text: string | null, highlight: string }) => {
+const Highlighter = ({ text, highlight }: { text: string | null | undefined, highlight: string }) => {
   if (!text) return null
   if (!highlight || highlight.length < 2) return <span>{text}</span>
   const parts = text.split(new RegExp(`(${highlight})`, 'gi'))
@@ -66,18 +66,15 @@ const Highlighter = ({ text, highlight }: { text: string | null, highlight: stri
 const Badge = ({ type }: { type: number }) => {
   const colors: Record<number, string> = { 6: 'bg-blue-50 text-blue-700 border-blue-200', 8: 'bg-purple-50 text-purple-700 border-purple-200', 13: 'bg-indigo-50 text-indigo-700 border-indigo-200' }
   const defaultColor = 'bg-slate-50 text-slate-600 border-slate-200'
-  const labels: Record<number, string> = { 6: 'Pregão', 8: 'Dispensa', 13: 'Concorrência' }
-  return <span className={`px-2 py-0.5 rounded text-xs font-semibold border ${colors[type] || defaultColor}`}>{labels[type] || 'Outros'}</span>
+  return <span className={`px-2 py-0.5 rounded text-xs font-semibold border ${colors[type] || defaultColor}`}>{type === 6 ? 'Pregão' : type === 8 ? 'Dispensa' : type === 13 ? 'Concorrência' : 'Outros'}</span>
 }
 
-// --- WIDGET AGENDA ---
 const AgendaWidget = ({ licitacoes, clienteAtual }: { licitacoes: Licitacao[], clienteAtual: Cliente | null }) => {
   const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
   const proximas = licitacoes
     .filter(l => {
       if (!l.data_abertura) return false
       const dataItem = new Date(l.data_abertura)
-      // Só mostra se for futuro, favorito E do cliente atual (se houver cliente selecionado)
       const isFuturo = dataItem >= hoje
       const isFavorito = l.favorito
       const isDoCliente = clienteAtual ? l.cliente_id === clienteAtual.id : true
@@ -116,7 +113,6 @@ const AgendaWidget = ({ licitacoes, clienteAtual }: { licitacoes: Licitacao[], c
   )
 }
 
-// --- MODAL DETALHES ---
 const ModalDetalhes = ({ licitacao, termoBusca, onClose, onUpdateStatus, clienteAtual }: { licitacao: Licitacao, termoBusca: string, onClose: () => void, onUpdateStatus: (id: number, status: string, favorito?: boolean) => void, clienteAtual: Cliente | null }) => {
   const [tab, setTab] = useState('detalhes')
 
@@ -126,7 +122,6 @@ const ModalDetalhes = ({ licitacao, termoBusca, onClose, onUpdateStatus, cliente
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
   }
 
-  // --- TAB PROPOSTA (Interno) ---
   const TabProposta = () => {
     const [itens, setItens] = useState([{ id: 1, desc: '', qtd: 1, valor: 0 }])
     const addItem = () => setItens([...itens, { id: Date.now(), desc: '', qtd: 1, valor: 0 }])
