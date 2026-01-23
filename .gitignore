@@ -1,0 +1,23 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependências
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Variáveis de Ambiente (MUITO IMPORTANTE)
+.env
+.env.local
