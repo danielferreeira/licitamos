@@ -1,33 +1,30 @@
-import { supabase } from '../supabaseClient'
+import { createClient } from '@supabase/supabase-js'
+
+// Inicialização do Cliente Supabase
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+export const supabase = createClient(supabaseUrl, supabaseKey)
 
 export const api = {
-  // Clientes
-  // Clientes (Atualizado para trazer documentos junto)
-  // ...
+  
+  // --- CLIENTES ---
   getClients: async () => {
-    // O segredo é: ', client_documents(*)' 
-    // O nome deve ser IGUAL ao nome da tabela no banco
     const { data, error } = await supabase
       .from('clients')
-      .select('*, client_documents(*)')  // <--- ATENÇÃO AQUI
+      .select('*, client_documents(*)')
       .order('company_name', { ascending: true })
       
     if (error) throw error
     return data
   },
-  // ...
 
   saveClient: async (client) => {
-    // AQUI ESTÁ A CORREÇÃO:
-    // Removemos 'id', 'created_at', 'user_id' (são automáticos)
-    // Removemos 'documents' (que vem do join da busca)
-    // Removemos 'status_receita' (que vem da API externa)
     const { 
       id, 
       created_at, 
       user_id, 
-      documents, 
-      status_receita, 
+      client_documents, // Remove para não tentar salvar a lista junto
+      client_history,   // Remove histórico
       ...dataToSave 
     } = client
     
@@ -41,195 +38,7 @@ export const api = {
     return await supabase.from('clients').delete().eq('id', id)
   },
 
-  // Interações
-  getInteractions: async (clientId) => {
-    const { data, error } = await supabase
-      .from('interactions')
-      .select('*')
-      .eq('client_id', clientId)
-      .order('created_at', { ascending: false })
-    if (error) throw error
-    return data
-  },
-  
-  updateTheme: async (newTheme) => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-
-    const { error } = await supabase
-      .from('profiles')
-      .update({ theme: newTheme })
-      .eq('id', user.id)
-
-    if (error) throw error
-  },
-
-  addInteraction: async (clientId, note) => {
-    return await supabase.from('interactions').insert([{ 
-      client_id: clientId, 
-      notes: note, 
-      contact_type: 'Anotação' 
-    }])
-  },
-  // Documentos
-  getDocuments: async (clientId) => {
-    const { data, error } = await supabase
-      .from('documents')
-      .select('*')
-      .eq('client_id', clientId)
-      .order('expiration_date', { ascending: true }) // Mostra os que vencem antes primeiro
-    if (error) throw error
-    return data
-  },
-
-  addDocument: async (docData) => {
-    return await supabase.from('documents').insert([docData])
-  },
-
-  deleteDocument: async (id) => {
-    return await supabase.from('documents').delete().eq('id', id)
-  },
-  // ... resto do código anterior ...
-
-  // Dashboard & Alertas
-  getDashboardStats: async () => {
-    const today = new Date().toISOString().split('T')[0]
-    
-    // Data daqui a 30 dias
-    const next30Days = new Date()
-    next30Days.setDate(next30Days.getDate() + 30)
-    const next30DaysStr = next30Days.toISOString().split('T')[0]
-
-    // 1. Total de Clientes
-    const { count: clientsCount } = await supabase
-      .from('clients')
-      .select('*', { count: 'exact', head: true })
-
-    // 2. Docs Vencidos (data < hoje)
-    const { count: expiredCount } = await supabase
-      .from('documents')
-      .select('*', { count: 'exact', head: true })
-      .lt('expiration_date', today)
-
-    // 3. Docs Vencendo em Breve (hoje <= data <= 30 dias)
-    const { count: expiringCount } = await supabase
-      .from('documents')
-      .select('*', { count: 'exact', head: true })
-      .gte('expiration_date', today)
-      .lte('expiration_date', next30DaysStr)
-
-    return {
-      clients: clientsCount || 0,
-      expired: expiredCount || 0,
-      expiring: expiringCount || 0
-    }
-  },
-  // ... (código anterior)
-
-  // Licitações (Kanban)
-  getBids: async () => {
-    const { data, error } = await supabase
-      .from('bids')
-      .select('*, clients(company_name)') // Traz o nome do cliente junto
-      .order('deadline', { ascending: true })
-    if (error) throw error
-    return data
-  },
-
-  saveBid: async (bid) => {
-    // AQUI ESTÁ A CORREÇÃO:
-    // Removemos 'clients' (que vem da leitura e causa o erro)
-    // Removemos 'created_at' e 'user_id' (são automáticos)
-    // Removemos 'id' (usado apenas para identificar qual atualizar)
-    const { 
-      id, 
-      clients, 
-      created_at, 
-      user_id, 
-      ...dataToSave 
-    } = bid
-    
-    if (id) {
-      return await supabase.from('bids').update(dataToSave).eq('id', id)
-    }
-    return await supabase.from('bids').insert([dataToSave])
-  },
-
-  deleteBid: async (id) => {
-    return await supabase.from('bids').delete().eq('id', id)
-  },
-  
-  updateBidStatus: async (id, newStatus) => {
-    return await supabase.from('bids').update({ status: newStatus }).eq('id', id)
-  },
-  // ... código anterior ...
-
-  // PERFIL / CONFIGURAÇÕES
-  getProfile: async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return null
-
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*') // O * já vai trazer a coluna 'theme' nova
-      .eq('id', user.id)
-      .single()
-
-    if (error && error.code !== 'PGRST116') throw error
-    return data
-  },
-
-  saveProfile: async (profileData) => {
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    const updates = {
-      id: user.id,
-      ...profileData,
-      updated_at: new Date(),
-    }
-
-    const { error } = await supabase.from('profiles').upsert(updates)
-    if (error) throw error
-  },
-
-  // BACKUP COMPLETO (Exportar Dados)
-  getFullBackup: async () => {
-    const { data: clients } = await supabase.from('clients').select('*')
-    const { data: bids } = await supabase.from('bids').select('*')
-    return { clients, bids, exported_at: new Date() }
-  },
-  // ... (código anterior)
-
-  // IMPORTAÇÃO DE DADOS (Restaurar Backup)
-  importData: async (jsonData) => {
-    const { clients, bids } = jsonData
-    
-    // 1. Validar estrutura básica
-    if (!Array.isArray(clients) || !Array.isArray(bids)) {
-      throw new Error("Arquivo inválido. Formato JSON incorreto.")
-    }
-
-    // 2. Importar Clientes primeiro (Upsert = Atualiza se existir, Cria se não)
-    if (clients.length > 0) {
-      const { error: errorClients } = await supabase
-        .from('clients')
-        .upsert(clients, { onConflict: 'id' }) // Usa o ID para saber se atualiza
-      
-      if (errorClients) throw new Error("Erro ao importar clientes: " + errorClients.message)
-    }
-
-    // 3. Importar Licitações depois
-    if (bids.length > 0) {
-      const { error: errorBids } = await supabase
-        .from('bids')
-        .upsert(bids, { onConflict: 'id' })
-        
-      if (errorBids) throw new Error("Erro ao importar licitações: " + errorBids.message)
-    }
-
-    return { clientsCount: clients.length, bidsCount: bids.length }
-  },
-  // --- HISTÓRICO DO CLIENTE ---
+  // --- HISTÓRICO (Interações) ---
   getClientHistory: async (clientId) => {
     const { data, error } = await supabase
       .from('client_history')
@@ -244,7 +53,6 @@ export const api = {
   addClientHistory: async (clientId, content) => {
     const { data: { user } } = await supabase.auth.getUser()
     
-    // Mudança: Adicionei .select().single() para retornar o objeto criado
     const { data, error } = await supabase
       .from('client_history')
       .insert([
@@ -258,11 +66,8 @@ export const api = {
       .single() 
     
     if (error) throw error
-    
-    // Retorna o dado para a gente usar na tela imediatamente
     return data 
   },
-
 
   // --- DOCUMENTOS ---
   getDocuments: async (clientId) => {
@@ -285,22 +90,96 @@ export const api = {
     if (error) throw error
   },
 
-  // ... (outras funções)
+  // --- DASHBOARD (KPIs) ---
+  getDashboardStats: async () => {
+    const today = new Date().toISOString().split('T')[0]
+    
+    const next30Days = new Date()
+    next30Days.setDate(next30Days.getDate() + 30)
+    const next30DaysStr = next30Days.toISOString().split('T')[0]
 
-  // BUSCAR DADOS FINANCEIROS REAIS
+    // 1. Total de Clientes
+    const { count: clientsCount } = await supabase
+      .from('clients')
+      .select('*', { count: 'exact', head: true })
+
+    // 2. Docs Vencidos (Usando a tabela correta: client_documents)
+    const { count: expiredCount } = await supabase
+      .from('client_documents')
+      .select('*', { count: 'exact', head: true })
+      .lt('expiration_date', today)
+
+    // 3. Docs Vencendo (Usando a tabela correta: client_documents)
+    const { count: expiringCount } = await supabase
+      .from('client_documents')
+      .select('*', { count: 'exact', head: true })
+      .gte('expiration_date', today)
+      .lte('expiration_date', next30DaysStr)
+
+    return {
+      clients: clientsCount || 0,
+      expired: expiredCount || 0,
+      expiring: expiringCount || 0
+    }
+  },
+
+  // --- LICITAÇÕES (Kanban) ---
+  getBids: async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return []
+
+    const { data, error } = await supabase
+      .from('bids')
+      .select('*, clients(company_name)')
+      .order('deadline', { ascending: true })
+      
+    if (error) throw error
+    return data
+  },
+
+  saveBid: async (bid) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    // Removemos 'clients' pois é um objeto de leitura (join), não existe na tabela bids
+    const { 
+      id, 
+      clients, 
+      created_at, 
+      user_id, 
+      ...dataToSave 
+    } = bid
+    
+    // Garante que o valor seja numérico e não string vazia
+    if (dataToSave.value === '') dataToSave.value = 0
+
+    if (id) {
+      return await supabase.from('bids').update(dataToSave).eq('id', id)
+    }
+    // No insert, forçamos o user_id do usuário logado
+    return await supabase.from('bids').insert([{ ...dataToSave, user_id: user.id }])
+  },
+
+  deleteBid: async (id) => {
+    return await supabase.from('bids').delete().eq('id', id)
+  },
+  
+  updateBidStatus: async (id, newStatus) => {
+    return await supabase.from('bids').update({ status: newStatus }).eq('id', id)
+  },
+
+  // --- FINANCEIRO ---
   getFinancialSummary: async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
 
-    // Busca todas as licitações do usuário
+    // Busca apenas status e valor para economizar dados
     const { data, error } = await supabase
       .from('bids')
-      .select('*')
+      .select('status, value')
       .eq('user_id', user.id)
 
     if (error) throw error
 
-    // Calcula os totais no Javascript
     const summary = {
       won: { value: 0, count: 0 },
       lost: { value: 0, count: 0 },
@@ -308,15 +187,18 @@ export const api = {
     }
 
     data.forEach(bid => {
-      const val = Number(bid.amount) || 0
-      if (bid.status === 'Ganho') {
+      // CORREÇÃO: Usamos 'value' (nome da coluna no banco), não 'amount'
+      const val = Number(bid.value) || 0
+      
+      // CORREÇÃO: Usamos 'Ganha'/'Perdida' para bater com o Modal
+      if (bid.status === 'Ganha') {
         summary.won.value += val
         summary.won.count += 1
-      } else if (bid.status === 'Perdido') {
+      } else if (bid.status === 'Perdida') {
         summary.lost.value += val
         summary.lost.count += 1
       } else {
-        // Qualquer outra coisa consideramos "Em Aberto" (Potencial)
+        // Todo o resto é potencial (Triagem, Disputa, etc)
         summary.potential.value += val
         summary.potential.count += 1
       }
@@ -325,12 +207,73 @@ export const api = {
     return summary
   },
 
-  // (Opcional) Função para criar uma licitação rápida (para testes)
-  addBid: async (bidData) => {
+  // --- PERFIL & TEMA ---
+  getProfile: async () => {
     const { data: { user } } = await supabase.auth.getUser()
-    const { error } = await supabase.from('bids').insert([{ ...bidData, user_id: user.id }])
+    if (!user) return null
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single()
+
+    if (error && error.code !== 'PGRST116') throw error
+    return data
+  },
+
+  saveProfile: async (profileData) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    const updates = {
+      id: user.id,
+      ...profileData,
+      updated_at: new Date(),
+    }
+
+    const { error } = await supabase.from('profiles').upsert(updates)
     if (error) throw error
+  },
+
+  updateTheme: async (newTheme) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ theme: newTheme })
+      .eq('id', user.id)
+
+    if (error) throw error
+  },
+
+  // --- BACKUP & IMPORT ---
+  getFullBackup: async () => {
+    const { data: clients } = await supabase.from('clients').select('*')
+    const { data: bids } = await supabase.from('bids').select('*')
+    return { clients, bids, exported_at: new Date() }
+  },
+
+  importData: async (jsonData) => {
+    const { clients, bids } = jsonData
+    if (!Array.isArray(clients) || !Array.isArray(bids)) {
+      throw new Error("Arquivo inválido.")
+    }
+
+    if (clients.length > 0) {
+      const { error: errorClients } = await supabase
+        .from('clients')
+        .upsert(clients, { onConflict: 'id' })
+      if (errorClients) throw new Error("Erro clientes: " + errorClients.message)
+    }
+
+    if (bids.length > 0) {
+      const { error: errorBids } = await supabase
+        .from('bids')
+        .upsert(bids, { onConflict: 'id' })
+      if (errorBids) throw new Error("Erro licitações: " + errorBids.message)
+    }
+
+    return { clientsCount: clients.length, bidsCount: bids.length }
   }
-  
-  // ... (resto do código)
 }

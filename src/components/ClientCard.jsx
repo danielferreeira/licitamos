@@ -1,7 +1,7 @@
 import { Phone, MapPin, Calendar, Eye, Edit, Trash2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { maskPhone } from '../utils/formatters' // Importando formatador se tiver
+import { maskPhone } from '../utils/formatters'
 
 export function ClientCard({ client, onOpenDetails, onEdit, onDelete }) {
   const statusColors = {
@@ -11,7 +11,7 @@ export function ClientCard({ client, onOpenDetails, onEdit, onDelete }) {
     'Inativo': 'bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'
   }
 
-  // CORREÇÃO AQUI: Usando 'last_contact' em vez de 'last_contact_date'
+  // Tratamento de data seguro
   const lastContactDate = client.last_contact 
     ? format(new Date(client.last_contact), "dd MMM", { locale: ptBR })
     : 'Nunca'
@@ -38,6 +38,7 @@ export function ClientCard({ client, onOpenDetails, onEdit, onDelete }) {
         </p>
 
         <div className="space-y-2 text-xs text-slate-500 dark:text-slate-400">
+          {/* Renderiza telefone apenas se existir */}
           {client.phone && (
             <div className="flex items-center gap-2">
               <Phone size={14} className="text-slate-400 shrink-0"/> {maskPhone(client.phone)}

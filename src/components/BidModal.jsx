@@ -4,25 +4,41 @@ import { api } from '../services/api'
 import { toast } from 'sonner'
 
 export function BidModal({ isOpen, onClose, onSave, initialData }) {
-  // ... (estados e useEffects iguais) ...
   const [formData, setFormData] = useState({ title: '', client_id: '', status: 'Triagem', value: '', deadline: '', portal: '' })
   const [clients, setClients] = useState([])
   const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => { if (isOpen) api.getClients().then(data => setClients(data || [])) }, [isOpen])
-  useEffect(() => { if (initialData) setFormData(initialData); else setFormData({ title: '', client_id: '', status: 'Triagem', value: '', deadline: '', portal: '' }) }, [initialData, isOpen])
+  
+  useEffect(() => { 
+    if (initialData) setFormData(initialData)
+    else setFormData({ title: '', client_id: '', status: 'Triagem', value: '', deadline: '', portal: '' }) 
+  }, [initialData, isOpen])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSaving(true)
-    try { await onSave(formData); toast.success('Licitação salva!'); onClose() } catch (error) { toast.error('Erro ao salvar.') } finally { setIsSaving(false) }
+    try { 
+      // CORREÇÃO: Converter valor para float para garantir soma correta no financeiro
+      const payload = { 
+        ...formData, 
+        value: formData.value ? parseFloat(formData.value) : 0 
+      }
+      
+      await onSave(payload)
+      toast.success('Licitação salva!') 
+      onClose() 
+    } catch (error) { 
+      toast.error('Erro ao salvar.') 
+    } finally { 
+      setIsSaving(false) 
+    }
   }
 
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-      {/* Modal Container: Dark Mode colors */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg border border-slate-100 dark:border-slate-800 transition-colors">
         
         {/* Header */}
@@ -39,7 +55,7 @@ export function BidModal({ isOpen, onClose, onSave, initialData }) {
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
             <label className="label-title">Objeto / Edital <span className="text-red-500">*</span></label>
-            <input className="input-field" required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="Ex: Pregão Eletrônico 90/2025 - Material de Limpeza" />
+            <input className="input-field" required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="Ex: Pregão Eletrônico 90/2025" />
           </div>
 
           <div>
@@ -52,12 +68,12 @@ export function BidModal({ isOpen, onClose, onSave, initialData }) {
 
           <div className="grid grid-cols-2 gap-5">
              <div>
-               <label className="label-title flex items-center gap-1"><DollarSign size={14}/> Valor Estimado (R$)</label>
+               <label className="label-title flex items-center gap-1"><DollarSign size={14}/> Valor (R$)</label>
                <input type="number" step="0.01" className="input-field" value={formData.value} onChange={e => setFormData({...formData, value: e.target.value})} placeholder="0.00" />
              </div>
              <div>
-               <label className="label-title flex items-center gap-1"><Calendar size={14}/> Data da Disputa</label>
-               <input type="date" className="input-field" required value={formData.deadline} onChange={e => setFormData({...formData, deadline: e.target.value})} />
+               <label className="label-title flex items-center gap-1"><Calendar size={14}/> Data Disputa</label>
+               <input type="date" className="input-field" value={formData.deadline} onChange={e => setFormData({...formData, deadline: e.target.value})} />
              </div>
           </div>
 
@@ -69,12 +85,12 @@ export function BidModal({ isOpen, onClose, onSave, initialData }) {
              <div>
                <label className="label-title">Status Inicial</label>
                <select className="input-field" value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})}>
-                 <option>Triagem</option>
-                 <option>Em Análise</option>
-                 <option>Disputa</option>
-                 <option>Aguardando</option>
-                 <option>Ganha</option>
-                 <option>Perdida</option>
+                 <option value="Triagem">Triagem</option>
+                 <option value="Em Análise">Em Análise</option>
+                 <option value="Disputa">Disputa</option>
+                 <option value="Aguardando">Aguardando</option>
+                 <option value="Ganha">Ganha</option>
+                 <option value="Perdida">Perdida</option>
                </select>
              </div>
           </div>
