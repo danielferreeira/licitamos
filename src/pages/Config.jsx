@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { api } from '../services/api'
-import { Save, Building2, ShieldCheck, Download, Upload, Loader2, User, Moon, Sun, Monitor, AlertTriangle, MapPin, Wallet, FileSignature } from 'lucide-react'
+import { Save, Building2, ShieldCheck, Download, Upload, Loader2, User, Moon, Sun, Monitor, MapPin, Wallet, FileSignature } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '../contexts/AuthContext'
-import { maskDocument, maskPhone, maskZipCode, maskCpf } from '../utils/formatters' // Certifique-se de ter maskCpf e maskZipCode
+import { maskDocument, maskPhone, maskZipCode, maskCpf } from '../utils/formatters'
 import { useTheme } from '../contexts/ThemeContext'
-import { external } from '../services/external' // Para buscar CEP se tiver
+import { external } from '../services/external'
 
 export function Config() {
   const { user } = useAuth()
@@ -35,13 +35,13 @@ export function Config() {
     finally { setLoading(false) }
   }
 
-  // Busca CEP automática (Opcional)
+  // Busca CEP automática
   async function handleSearchCEP(cep) {
     if (cep.length < 9) return
     try {
-       // Se você tiver o serviço external configurado:
        const address = await external.fetchCEP(cep)
        setProfile(prev => ({ ...prev, ...address }))
+       toast.success("Endereço encontrado!")
     } catch (e) { console.log('Erro CEP', e) }
   }
 
@@ -55,9 +55,49 @@ export function Config() {
     finally { setSaving(false) }
   }
 
-  // ... (Funções de Backup e Import mantidas iguais, omiti para economizar espaço) ...
-  async function handleBackup() { /* ... código anterior ... */ }
-  async function handleImport(event) { /* ... código anterior ... */ }
+  // --- FUNÇÕES DE BACKUP E IMPORTAÇÃO (RESTAURADAS) ---
+  
+  async function handleBackup() {
+    const promise = async () => {
+      const data = await api.getFullBackup()
+      const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(JSON.stringify(data, null, 2))}`
+      const link = document.createElement("a")
+      link.href = jsonString
+      link.download = `backup_licitamos_${new Date().toISOString().split('T')[0]}.json`
+      link.click()
+    }
+    toast.promise(promise, { loading: 'Gerando backup...', success: 'Download iniciado!', error: 'Erro ao gerar backup' })
+  }
+
+  async function handleImport(event) {
+    const file = event.target.files[0]
+    if (!file) return
+
+    if (!window.confirm("ATENÇÃO: Importar dados pode sobrescrever informações existentes com o mesmo ID. Deseja continuar?")) {
+      event.target.value = ''
+      return
+    }
+
+    setImporting(true)
+    const reader = new FileReader()
+    
+    reader.onload = async (e) => {
+      try {
+        const json = JSON.parse(e.target.result)
+        const result = await api.importData(json)
+        toast.success(`Importação concluída! ${result.clientsCount} clientes e ${result.bidsCount} licitações processados.`)
+        // Opcional: Recarregar a página após importar
+        setTimeout(() => window.location.reload(), 1500)
+      } catch (error) {
+        toast.error("Falha na importação: " + error.message)
+      } finally {
+        setImporting(false)
+        event.target.value = ''
+      }
+    }
+    
+    reader.readAsText(file)
+  }
 
   return (
     <div className="animate-fade-in max-w-4xl mx-auto pb-10">
@@ -97,24 +137,24 @@ export function Config() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="col-span-2">
                 <label className="label-title">Razão Social</label>
-                <input className="input-field" value={profile.company_name} onChange={e => setProfile({...profile, company_name: e.target.value})} placeholder="Sua Empresa Ltda" />
+                <input className="input-field" value={profile.company_name || ''} onChange={e => setProfile({...profile, company_name: e.target.value})} placeholder="Sua Empresa Ltda" />
               </div>
               <div>
                 <label className="label-title">CNPJ</label>
-                <input className="input-field" value={profile.cnpj} onChange={e => setProfile({...profile, cnpj: maskDocument(e.target.value)})} maxLength={18} />
+                <input className="input-field" value={profile.cnpj || ''} onChange={e => setProfile({...profile, cnpj: maskDocument(e.target.value)})} maxLength={18} />
               </div>
               <div>
                 <label className="label-title">Telefone / WhatsApp</label>
-                <input className="input-field" value={profile.phone} onChange={e => setProfile({...profile, phone: maskPhone(e.target.value)})} maxLength={15} />
+                <input className="input-field" value={profile.phone || ''} onChange={e => setProfile({...profile, phone: maskPhone(e.target.value)})} maxLength={15} />
               </div>
               <div className="col-span-2">
                 <label className="label-title">E-mail Comercial</label>
-                <input type="email" className="input-field" value={profile.email_contact} onChange={e => setProfile({...profile, email_contact: e.target.value})} />
+                <input type="email" className="input-field" value={profile.email_contact || ''} onChange={e => setProfile({...profile, email_contact: e.target.value})} />
               </div>
             </div>
           </div>
 
-          {/* BLOCO 2: ENDEREÇO (Novo) */}
+          {/* BLOCO 2: ENDEREÇO */}
           <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
             <h3 className="font-bold text-lg text-slate-800 dark:text-white mb-6 flex items-center gap-2">
                <MapPin className="text-brand-green" size={20}/> Endereço
@@ -152,7 +192,7 @@ export function Config() {
             </div>
           </div>
 
-          {/* BLOCO 3: REPRESENTANTE & BANCO (Novo) */}
+          {/* BLOCO 3: REPRESENTANTE & BANCO */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              {/* Representante */}
              <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
@@ -209,10 +249,9 @@ export function Config() {
         </form>
       )}
 
-      {/* ABA APARÊNCIA (Mantém igual) */}
+      {/* ABA APARÊNCIA */}
       {activeTab === 'appearance' && (
          <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm border border-slate-100 dark:border-slate-700 animate-fade-in transition-colors">
-            {/* ... Conteúdo da aba aparência mantido igual ao anterior ... */}
             <div className="flex items-center gap-4 mb-8">
               <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center text-brand-green">
                 <Monitor size={32}/>
@@ -242,10 +281,10 @@ export function Config() {
          </div>
       )}
 
-      {/* ABA SEGURANÇA (Mantém igual) */}
+      {/* ABA SEGURANÇA (RESTAURADA COM IMPORT/EXPORT) */}
       {activeTab === 'security' && (
          <div className="space-y-6 animate-fade-in">
-           {/* ... Conteúdo de segurança mantido ... */}
+           {/* Cartão Conta */}
            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-6 transition-colors">
             <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 text-slate-400 rounded-full flex items-center justify-center">
               <User size={32}/>
@@ -254,6 +293,42 @@ export function Config() {
               <h3 className="font-bold text-lg text-slate-900 dark:text-white">Conta Conectada</h3>
               <p className="text-slate-500 dark:text-slate-400">{user?.email}</p>
             </div>
+          </div>
+
+          {/* Cartão Backup & Restore */}
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+            <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-2">Gerenciamento de Dados</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Exporte seus dados para segurança ou importe um backup anterior.</p>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button 
+                onClick={handleBackup}
+                className="flex-1 border-2 border-slate-200 dark:border-slate-600 hover:border-brand-green hover:text-brand-green text-slate-600 dark:text-slate-300 px-6 py-3 rounded-xl font-bold transition flex items-center justify-center gap-2"
+              >
+                <Download size={20}/> Fazer Backup (Exportar)
+              </button>
+
+              <div className="flex-1 relative">
+                <input 
+                  type="file" 
+                  accept=".json"
+                  onChange={handleImport}
+                  disabled={importing}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                />
+                <button 
+                  disabled={importing}
+                  className="w-full h-full bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-6 py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-600"
+                >
+                  {importing ? <Loader2 className="animate-spin" size={20}/> : <Upload size={20}/>}
+                  {importing ? "Importando..." : "Importar Backup"}
+                </button>
+              </div>
+            </div>
+            
+            <p className="text-xs text-slate-400 mt-3 text-center">
+              A importação suporta arquivos .json gerados pelo próprio Licitamos.
+            </p>
           </div>
          </div>
       )}
