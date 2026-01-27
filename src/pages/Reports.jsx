@@ -87,10 +87,8 @@ As partes têm entre si, justas e contratadas, a celebração do presente Contra
 CLÁUSULA PRIMEIRA – DO OBJETO
 
 O presente contrato tem como objeto a prestação de serviços de assessoria e apoio na preparação de documentação e participação em licitações, abrangendo as seguintes atividades: 
-- Busca de Editais: Realização de pesquisa regular em fontes de informação sobre editais relacionados ao segmento da empresa, incluindo plataformas governamentais, jornais e portais específicos.
-- Identificação de oportunidades de licitação que atendam aos interesses e necessidades da empresa.
-- Análise de Editais: Estudo detalhado dos editais encontrados, incluindo requisitos técnicos, prazos e condições de participação.
-- Elaboração de relatórios resumidos sobre as oportunidades identificadas, destacando informações relevantes e possíveis riscos.
+- Busca de Editais: Realização de pesquisa regular em fontes de informação sobre editais relacionados ao segmento da empresa, incluindo plataformas governamentais, jornais e portais específicos. Identificação de oportunidades de licitação que atendam aos interesses e necessidades da empresa.
+- Análise de Editais: Estudo detalhado dos editais encontrados, incluindo requisitos técnicos, prazos e condições de participação. Elaboração de relatórios resumidos sobre as oportunidades identificadas, destacando informações relevantes e possíveis riscos.
 - Elaboração e de documentação: Coordenar e elaborar toda a documentação necessária para a participação em licitações, incluindo, mas não se limitando a: 
 ● Certidões e declarações exigidas pelas licitações;
 ● Propostas comerciais e técnicas;
@@ -123,8 +121,17 @@ São obrigações da CONTRATADA:
 
 CLÁUSULA TERCEIRA – DOS HONORÁRIOS
 
-- Pelos serviços prestados serão remunerados da seguinte forma: R$ 1.200,00 (Um mil e duzentos reais) a primeira parcela será paga no dia 10.02.2026, e demais serão pago todo dia 10, mediante PIX, direto na conta da CONTRATADA, qual seja: Nome: Débora Felipiak Ern Sociedade Unipessoal de Advocacia, Banco Sicoob: 756, agência 3326, conta-corrente 51.563-9; Chave PIX: 51.561.503/0001-77.
-- Comissão de Êxito: De igual forma, A CONTRATANTE se compromete a pagar ao CONTRATADO, como contraprestação pelos serviços de assessoria empresarial, um montante correspondente a 6% (seis por cento) do valor líquido dos contratos firmados em decorrência de licitações bem-sucedidas, na mesma conta bancária mencionada acima. A remuneração por êxito será devida independentemente de rescisão contratual posterior à assinatura do contrato oriundo da licitação, sendo irrevogável e irretratável.
+Pelos serviços prestados serão remunerados da seguinte forma: R$ 1.200,00 (Um mil e duzentos reais) a primeira parcela será paga no dia 10.02.2026, e demais serão pago todo dia 10, mediante PIX, direto na conta da CONTRATADA, qual seja: Nome: Débora Felipiak Ern Sociedade Unipessoal de Advocacia, Banco Sicoob: 756, agência 3326, conta-corrente 51.563-9; Chave PIX: 51.561.503/0001-77.
+
+Comissão de Êxito: De igual forma, A CONTRATANTE se compromete a pagar ao CONTRATADO, como contraprestação pelos serviços de assessoria empresarial, um montante correspondente a 6% (seis por cento) do valor líquido dos contratos firmados em decorrência de licitações bem-sucedidas, na mesma conta bancária mencionada acima. A remuneração por êxito será devida independentemente de rescisão contratual posterior à assinatura do contrato oriundo da licitação, sendo irrevogável e irretratável.
+
+3.1. Em caso de inadimplemento por parte do CONTRATANTE quanto ao pagamento do serviço prestado, deverá incidir sobre o valor total devido juros de 1% ao mês, multa de 2% e correção monetária de acordo com o INPC, até a data do efetivo pagamento. 
+
+3.2. Em caso de não pagamento, a CONTRATADA fica autorizada, desde já, a proceder com a inserção do nome do CONTRATANTE nos Órgãos de Proteção ao Crédito. 
+
+3.3. Caso o CONTRATANTE não efetue o pagamento do valor devido em até 30 (trinta) dias após o vencimento, o contrato será rescindido de pleno direito e a CONTRATADA poderá encaminhar os débitos para cobrança extrajudicial e/ou judicial, mediante contratação de assessoria de cobrança e/ou escritórios de advocacia, obrigando-se o CONTRATANTE a pagar honorários, os quais já ficam estipulados em 20% (vinte por cento) sobre o saldo total devido, bem como as custas despendidas.
+
+3.4. A remuneração acordada não inclui despesas relacionadas ao objeto do contrato, como locomoção, hospedagem, passagens, alimentação, fotocópias, serviços de auditoria, contabilidade para regularização de documentos fiscais, e custas judiciais. Essas despesas deverão ser pagas pela CONTRATANTE quando ocorrerem, seja por antecipação de numerário ou reembolso mediante comprovação.
 
 CLÁUSULA QUARTA – DA VIGÊNCIA
 
@@ -142,6 +149,30 @@ Contudo, o CONTRATADO não garante resultados específicos no processo administr
 CLÁUSULA SÉTIMA – DA RESCISÃO CONTRATUAL
 
 Poderá o presente Instrumento ser rescindido por qualquer das partes, devendo a parte desistente notificar a outra por escrito, mediante aviso prévio de 30 (trinta) dias, sob pena de multa no importe de 10% (dez por cento) do valor total das mensalidades a vencer. 
+
+CLÁUSULA OITAVA – DO CASO FORTUITO OU FORÇA MAIOR 
+
+A simples alegação de caso fortuito ou força maior, sem comprovação do nexo causal entre o fato e a impossibilidade de cumprimento, não exime as partes de suas obrigações aqui pactuadas.
+
+8.1. Eventual nulidade ou invalidade de qualquer uma das cláusulas previstas no presente contrato não acarreta a nulidade ou invalidade do presente contrato, permanecendo vigentes as demais cláusulas e condições nele previstas.
+
+8.2. A tolerância de qualquer das partes em relação ao descumprimento das obrigações previstas no presente contrato não constitui novação, precedente, alteração de contrato ou renúncia ao direito de exigir o seu cumprimento e/ou aplicar as sanções cabíveis e/ou ver-se ressarcida de eventuais perdas e danos.
+
+CLÁUSULA NONA – DA ASSINATURA ELETRÔNICA
+
+As partes aceitam e admitem como válida a assinatura eletrônica para fins de formalização do presente negócio jurídico, de acordo com o Art. 10, parágrafo 2º, da Medida Provisória nº 2.200-2/2001.
+
+CLÁUSULA DÉCIMA: CONFORMIDADE COM A LEI GERAL DE PROTEÇÃO DE DADOS (LGPD)
+
+A CONTRATADA, por si e por seus colaboradores e subcontratados, obrigam-se, sempre que aplicável, a atuar em conformidade com a Lei nº 13.709/2018 - Lei Geral de Proteção de Dados Pessoais – LGPD, bem como com as determinações dos órgãos fiscalizadores e reguladores. Na ocorrência de tratamento de dados pessoais, em decorrência da viabilização do objeto do presente instrumento, a CONTRATADA se obriga a tratar os referidos dados, apenas nos limites necessários e informados pela CONTRATANTE, empregando todas as medidas que proporcionem a segurança da informação, sob pena de ser responsabilizada por eventuais danos que venha a ocasionar a terceiros, tudo conforme disposição da LGPD.
+
+CLÁUSULA DÉCIMA PRIMEIRA – DO DESCUMPRIMENTO DE CLÁUSULA CONTRATUAL 
+
+O descumprimento de qualquer Cláusula aqui pactuada implicará na imediata rescisão deste Contrato, além de multa penal no importe de 30% (trinta por cento) sobre o valor total do contrato.
+
+CLÁUSULA DÉCIMA SEGUNDA – ATENDIMENTO FORA DO HORÁRIO ESTABELECIDO
+
+O horário de atendimento de nossa equipe, responsável pelos processos licitatórios, é de segunda-feira a sexta-feira das 08h30 às 18h00.  Desta forma, o suporte demandado por iniciativa da CONTRATANTE fora do horário de atendimento da CONTRATADA, a exemplo de, mas não se limitando a: esclarecimentos de dúvidas, análise de documentos, retorno de solicitações ou providencias, será cobrado um adicional conforme esclarecimentos no item subsequente. Em virtude de a CONTRATADA ser acionada fora do horário de seu atendimento, será cobrada pela hora ou fração de hora demanda o valor de R$150,00 (cento e cinquenta reais), sendo que o montante do valor devido será incluído na fatura de cobrança do mês subsequente.
 
 DO FORO DE ELEIÇÃO
 
