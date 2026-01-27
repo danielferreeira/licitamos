@@ -11,13 +11,15 @@ export function ClientCard({ client, onOpenDetails, onEdit, onDelete }) {
     'Inativo': 'bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'
   }
 
-  // Tratamento de data seguro
   const lastContactDate = client.last_contact 
     ? format(new Date(client.last_contact), "dd MMM", { locale: ptBR })
     : 'Nunca'
 
   return (
-    <div className="group bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-lg transition-all duration-300 flex flex-col justify-between h-full relative">
+    <div 
+      className="group bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-lg transition-all duration-300 flex flex-col justify-between h-full relative cursor-pointer"
+      onClick={() => onOpenDetails(client)} // Torna o card inteiro clicável para ver detalhes
+    >
       <div>
         <div className="flex justify-between items-start mb-3">
           <div className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${statusColors[client.status] || statusColors['Prospect']}`}>
@@ -38,12 +40,28 @@ export function ClientCard({ client, onOpenDetails, onEdit, onDelete }) {
         </p>
 
         <div className="space-y-2 text-xs text-slate-500 dark:text-slate-400">
-          {/* Renderiza telefone apenas se existir */}
+          
+          {/* SEÇÃO TELEFONE + WHATSAPP */}
           {client.phone && (
-            <div className="flex items-center gap-2">
-              <Phone size={14} className="text-slate-400 shrink-0"/> {maskPhone(client.phone)}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Phone size={14} className="text-slate-400 shrink-0"/> {maskPhone(client.phone)}
+              </div>
+              
+              {/* Botão WhatsApp Direto */}
+              <a 
+                href={`https://wa.me/55${client.phone.replace(/\D/g, '')}`}
+                target="_blank" 
+                rel="noreferrer"
+                onClick={(e) => e.stopPropagation()} // Impede abrir o modal de detalhes
+                className="px-2 py-1 bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-900/50 text-green-700 dark:text-green-400 text-[10px] font-bold rounded flex items-center gap-1 transition-colors"
+                title="Conversar no WhatsApp"
+              >
+                WhatsApp ↗
+              </a>
             </div>
           )}
+
           {(client.city || client.state) && (
             <div className="flex items-center gap-2">
               <MapPin size={14} className="text-slate-400 shrink-0"/> {client.city}/{client.state}
@@ -61,7 +79,7 @@ export function ClientCard({ client, onOpenDetails, onEdit, onDelete }) {
           </span>
         </div>
         <button 
-          onClick={() => onOpenDetails(client)}
+          onClick={(e) => { e.stopPropagation(); onOpenDetails(client) }}
           className="bg-slate-900 dark:bg-slate-700 text-white p-2 rounded-xl hover:bg-brand-green dark:hover:bg-slate-600 transition-colors shadow-sm"
         >
           <Eye size={18} />
