@@ -36,8 +36,6 @@ export function Reports() {
   const generateChecklist = (client) => {
     return `SOLICITAÇÃO DE DOCUMENTOS PARA LICITAÇÃO
 Cliente: ${client.company_name}
-CNPJ: ${maskDocument(client.cnpj)}
-Data: ${new Date().toLocaleDateString('pt-BR')}
 
 Prezados,
 
@@ -48,7 +46,7 @@ DOCUMENTAÇÃO JURÍDICA E FISCAL:
 [ ] Documento do Representante Legal (RG/CPF ou CNH)
 [ ] Alvará de Funcionamento
 [ ] Certidão Simplificada (Junta Comercial)
-
+  
 DADOS CADASTRAIS E ACESSO:
 [ ] Nome completo do representante que irá assinar
 [ ] Dados Bancários (Banco, Agência, Conta - Pessoa Jurídica)
@@ -223,6 +221,20 @@ o	 (5% por cento) sobre o valor do contrato conquistado.
 Condições Adicionais Importantes:
 ●	As despesas com viagens, hospedagem e materiais, quando necessárias para o bom andamento dos serviços, serão cobradas à parte, mediante apresentação de comprovantes. 
 ●	O contrato de prestação de serviços terá duração inicial de 1 (um) ano, não possuindo cláusula de fidelidade, o que oferece flexibilidade e transparência na nossa relação. 
+
+Para garantir a agilidade no atendimento e a efetiva participação da empresa em processos licitatórios, será necessário o envio das seguintes informações e documentos:
+* Contrato social
+* Documento do representante legal
+* Nome do representante que irá assinar documentos
+* Dados bancários
+* E-mail e telefone de contato
+* Certificado digital ou acesso GOV
+* Balanço e DRE dos últimos dois anos com seus respectivos termos de abertura e fechamento 
+* Atestados de capacidade técnica emitidos por pessoa jurídica 
+* Papel timbrado da empresa
+* Alvará
+* Certidão simplificada
+* As certidões negativas (federais, estaduais, municipais, FGTS e trabalhistas) não precisam ser encaminhadas neste momento, porém é indispensável que estejam válidas e regulares para participação nas licitações.
 
 Proposta válida por 10 dias.
 
