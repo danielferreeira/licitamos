@@ -133,10 +133,9 @@ export function Dashboard() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Visão Geral</h1>
-          <p className="text-slate-500 dark:text-slate-400">Resumo da sua carteira de clientes.</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Visão Geral</h1>
+          <p className="text-slate-500 dark:text-slate-400 mb-8">Resumo da sua carteira de clientes.</p>
         </div>
-        
         <button 
           onClick={() => { setSelectedClient(null); setModalOpen(true); }}
           className="bg-brand-green hover:bg-brand-light text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-green/20 transition-all hover:-translate-y-0.5"

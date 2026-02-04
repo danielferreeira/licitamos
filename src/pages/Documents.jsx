@@ -4,7 +4,7 @@ import { api } from '../services/api'
 import { toast } from 'sonner'
 import { maskDocument, maskPhone } from '../utils/formatters'
 
-export function Reports() {
+export function Documents() {
   const [clients, setClients] = useState([])
   const [userProfile, setUserProfile] = useState(null)
   
@@ -88,21 +88,21 @@ O presente contrato tem como objeto a prestação de serviços de assessoria e a
 - Busca de Editais: Realização de pesquisa regular em fontes de informação sobre editais relacionados ao segmento da empresa, incluindo plataformas governamentais, jornais e portais específicos. Identificação de oportunidades de licitação que atendam aos interesses e necessidades da empresa.
 - Análise de Editais: Estudo detalhado dos editais encontrados, incluindo requisitos técnicos, prazos e condições de participação. Elaboração de relatórios resumidos sobre as oportunidades identificadas, destacando informações relevantes e possíveis riscos.
 - Elaboração e de documentação: Coordenar e elaborar toda a documentação necessária para a participação em licitações, incluindo, mas não se limitando a: 
-● Certidões e declarações exigidas pelas licitações;
-● Propostas comerciais e técnicas;
-● Comprovações de regularidade fiscal e trabalhista;
-● Qualificações técnicas e operacionais do CONTRATANTE.
-● Fornecer assessoria jurídica relacionada a questões de licitação, ajudando a evitar problemas legais e a garantir a conformidade com a legislação.
+   ● Certidões e declarações exigidas pelas licitações;
+   ● Propostas comerciais e técnicas;
+   ● Comprovações de regularidade fiscal e trabalhista;
+   ● Qualificações técnicas e operacionais do CONTRATANTE.
+   ● Fornecer assessoria jurídica relacionada a questões de licitação, ajudando a evitar problemas legais e a garantir a conformidade com a legislação.
 
 Acompanhamento da licitação: 
 A CONTRATADA compromete-se a monitorar o andamento das licitações em que a CONTRATANTE esteja participando, garantindo que sejam respeitados todos os prazos e procedimentos estabelecidos nos editais. 
 O monitoramento incluirá, mas não se limitará a:
-● Verificação rigorosa das datas de entrega de documentação e demais prazos estipulados no edital.
-● Acompanhamento de todas as etapas do processo licitatório, incluindo eventuais alterações ou retificações no edital.
-● Comunicação constante com a comissão de licitação para esclarecimento de dúvidas e obtenção de informações atualizadas sobre o andamento do processo.
-● Avaliação da concorrência e suas propostas para ajustar estratégias e melhorar a proposta da CONTRATANTE.
-● Preparação para imprevistos, incluindo a elaboração de recursos em caso de desclassificação ou impugnação por parte de concorrentes.
-● Elaboração de relatórios de progresso para manter a equipe da CONTRATANTE informada e alinhada com as responsabilidades e próximos passos.
+   ● Verificação rigorosa das datas de entrega de documentação e demais prazos estipulados no edital.
+   ● Acompanhamento de todas as etapas do processo licitatório, incluindo eventuais alterações ou retificações no edital.
+   ● Comunicação constante com a comissão de licitação para esclarecimento de dúvidas e obtenção de informações atualizadas sobre o andamento do processo.
+   ● Avaliação da concorrência e suas propostas para ajustar estratégias e melhorar a proposta da CONTRATANTE.
+   ● Preparação para imprevistos, incluindo a elaboração de recursos em caso de desclassificação ou impugnação por parte de concorrentes.
+   ● Elaboração de relatórios de progresso para manter a equipe da CONTRATANTE informada e alinhada com as responsabilidades e próximos passos.
 
 CLÁUSULA SEGUNDA – DAS OBRIGAÇÕES
 
@@ -207,20 +207,100 @@ Nossa assessoria engloba um conjunto completo de atividades estratégicas, garan
 ●	Acompanhamento Integral do Processo: Monitoramos cada etapa do processo licitatório, desde a publicação do edital, com uma análise detalhada dos requisitos e prazos. Também cuidamos da preparação e organização de toda a documentação necessária. Durante a abertura das propostas e lances, garantimos sua representação e acompanhamento. Se necessário, elaboramos recursos e seguimos com o processo até a homologação, mantendo você sempre informado e preparado para qualquer eventualidade ou necessidade de intervenção.
 ●	Suporte na Documentação Administrativa: Elaboramos a documentação administrativa necessária para o andamento do processo, incluindo pedidos de esclarecimento, impugnações e a elaboração de recursos.
 
-INVESTIMENTO E CONDIÇÕES GERAIS
+INVESTIMENTO
 
-Acreditamos em soluções flexíveis e personalizadas. Por isso, oferecemos as seguintes opções de investimento: 
+Acreditamos em soluções flexíveis e personalizadas. Nosso modelo de parceria baseia-se em uma estrutura de mensalidade fixa somada a uma gratificação por performance:
 
-1.	Mensalidade Fixa: 
-o	O valor da mensalidade nos 3 (três) primeiros meses é de R$ 600,00.
-o	A partir do quarto mês, o valor é reajustado para R$ 750,00.
-o	O pagamento da mensalidade fixa será realizado até o dia 10 (dez) de cada mês. 
-2.	Comissão por Êxito: 
-o	 (5% por cento) sobre o valor do contrato conquistado. 
+●	Mensalidade Fixa: R$ 600,00 nos 3 (três) primeiros meses, com reajuste para R$ 750,00 a partir do quarto mês. O vencimento ocorre todo dia 10.
+●	Comissão por Êxito: Adicional de 5% (cinco por cento) sobre o valor de cada contrato conquistado.
 
 Condições Adicionais Importantes:
 ●	As despesas com viagens, hospedagem e materiais, quando necessárias para o bom andamento dos serviços, serão cobradas à parte, mediante apresentação de comprovantes. 
 ●	O contrato de prestação de serviços terá duração inicial de 1 (um) ano, não possuindo cláusula de fidelidade, o que oferece flexibilidade e transparência na nossa relação. 
+
+Informamos que existem portais que fazem cobranças para participação nas licitações. Abaixo, listamos os valores praticados pelos principais portais do mercado:\n\n` +
+    
+    // Tabela HTML inserida como string única para evitar quebras de linha indesejadas na impressão
+    `<table style="width:100%; border-collapse: collapse; font-size: 10pt; font-family: 'Times New Roman', serif; margin-bottom: 20px;">
+      <thead>
+        <tr style="background-color: #f3f4f6;">
+          <th style="border: 1px solid #000; padding: 6px; text-align: left;">SITE</th>
+          <th style="border: 1px solid #000; padding: 6px; text-align: center;">MENSAL</th>
+          <th style="border: 1px solid #000; padding: 6px; text-align: center;">SEMESTRAL</th>
+          <th style="border: 1px solid #000; padding: 6px; text-align: center;">TRIMESTRAL</th>
+          <th style="border: 1px solid #000; padding: 6px; text-align: center;">ANUAL</th>
+          <th style="border: 1px solid #000; padding: 6px; text-align: center;">POR PARTICIPAÇÃO</th>
+          <th style="border: 1px solid #000; padding: 6px; text-align: center;">APENAS VENCEDOR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="border: 1px solid #000; padding: 6px;">PORTAL DE COMPRAS</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 155,00</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 1.550,00</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 129,00</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000; padding: 6px;">COMPRAS BR</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 180,00</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 640,00</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 980,00</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 96,00</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000; padding: 6px;">BNC</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 162,00</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 432,00</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 118,80</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000; padding: 6px;">BBMNET</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 187,00</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 706,80</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 148,00</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000; padding: 6px;">LICITAÇÕES-E</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 161,00</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 239,00</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000; padding: 6px;">LICITAR DIGITAL</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 1.197,00</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 138,90</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000; padding: 6px;">BLL</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">R$ 567,00</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">-</td>
+          <td style="border: 1px solid #000; padding: 6px; text-align: center;">1,5% do valor vencido</td>
+        </tr>
+      </tbody>
+    </table>`.replace(/\n/g, '') + // Remove quebras de linha do HTML para não conflitar com a lógica de impressão
+    
+    `\n\nExistem portais gratuitos também, como o Compras GOV (Brasil todo), e outros mais regionais como Pregão Banrisul (RS) e ComprasSC (SC). Esses são apenas os principais portais, existem outros, mas com menos frequência de licitações.
 
 Para garantir a agilidade no atendimento e a efetiva participação da empresa em processos licitatórios, será necessário o envio das seguintes informações e documentos:
 * Contrato social
@@ -267,73 +347,45 @@ ${userProfile?.phone || ''}`
   }
 
   // --- IMPRESSÃO INTELIGENTE (Com Assinaturas Lado a Lado) ---
+  // --- IMPRESSÃO SIMPLIFICADA (Sem ABNT) ---
   function handlePrint() {
     const printWindow = window.open('', '', 'height=600,width=800');
     
-    // Detectar Assinaturas para colocar lado a lado
-    const signatureLine = '__________________________________________';
-    const parts = generatedContent.split(signatureLine);
-    let finalContent = generatedContent.replace(/\n/g, '<br/>'); // Quebra de linha simples para HTML
-
-    if (parts.length === 3) {
-      const body = parts[0].replace(/\n/g, '<br/>');
-      const sig1 = parts[1].trim().replace(/\n/g, '<br/>'); 
-      const sig2 = parts[2].trim().replace(/\n/g, '<br/>'); 
-      
-      finalContent = `
-        <div class="content-body">${body}</div>
-        <div class="signature-container">
-          <div class="signature-box">__________________________________________<br/>${sig1}</div>
-          <div class="signature-box">__________________________________________<br/>${sig2}</div>
-        </div>
-      `;
-    }
+    // Converte quebras de linha (\n) em <br/> para o HTML, 
+    // mantendo o formato visual que você vê na tela.
+    const contentHtml = generatedContent.replace(/\n/g, '<br/>');
 
     printWindow.document.write('<html><head><title>Imprimir Documento</title>');
     printWindow.document.write(`
       <style>
-        @media print {
-          @page {
-            size: A4;
-            margin: 3cm 2cm 2cm 3cm; /* Margens ABNT: Sup 3, Dir 2, Inf 2, Esq 3 */
-          }
-        }
         body {
-          font-family: 'Times New Roman', Times, serif; /* Fonte Padrão ABNT */
-          font-size: 12pt;
-          line-height: 1.5;
-          color: #000;
-          margin: 40px; /* Margem visual na tela */
-          text-align: justify;
+          font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+          font-size: 11pt; /* Tamanho de leitura agradável */
+          line-height: 1.6; /* Espaçamento confortável */
+          color: #1f2937; /* Cinza escuro para melhor contraste */
+          margin: 40px; /* Margem padrão de impressora */
         }
         .header-logo { 
           max-width: 250px; 
           display: block; 
-          margin: 0 auto 1.5cm auto; 
+          margin: 0 auto 40px auto; 
         }
-        .signature-container {
-          display: flex;
-          justify-content: space-between;
-          margin-top: 2cm;
-          page-break-inside: avoid;
-        }
-        .signature-box {
-          width: 45%;
-          text-align: center;
-          font-size: 11pt;
-          line-height: 1.2;
-        }
-        /* Ajuste para visualizar na tela igual na impressão */
-        @media screen {
-          body { margin: 20px; font-family: sans-serif; }
-          .content-body { white-space: pre-wrap; font-family: 'Times New Roman'; }
+        /* Estilos para a Tabela ficar bonita na impressão */
+        table { width: 100%; border-collapse: collapse; margin: 25px 0; }
+        th, td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; font-size: 10pt; }
+        th { background-color: #f9fafb; font-weight: bold; color: #111; }
+        
+        /* Remove cabeçalhos/rodapés automáticos do navegador se possível */
+        @media print {
+          @page { margin: 1.5cm; }
         }
       </style>
     `);
     
     printWindow.document.write('</head><body>');
-    printWindow.document.write('<img src="/logo-full.png" class="header-logo" alt="Logo" />');
-    printWindow.document.write(finalContent);
+    // Tenta carregar logo full, se der erro esconde
+    printWindow.document.write('<img src="/logo-full.png" class="header-logo" alt="Logo" onError="this.style.display=\'none\'" />');
+    printWindow.document.write(contentHtml);
     printWindow.document.write('</body></html>');
     
     printWindow.document.close();

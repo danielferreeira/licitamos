@@ -100,10 +100,11 @@ export function Config() {
   }
 
   return (
-    <div className="animate-fade-in max-w-4xl mx-auto pb-10">
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Configurações</h1>
-      <p className="text-slate-500 dark:text-slate-400 mb-8">Gerencie seus dados e preferências do sistema.</p>
-
+    <div className="max-w-5xl mx-auto pb-10 animate-fade-in">
+      <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Configurações</h1>
+          <p className="text-slate-500 dark:text-slate-400 mb-8">Gerencie seus dados e preferências do sistema.</p>
+      </div>
       {/* ABAS */}
       <div className="flex gap-2 mb-8 border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
         {[

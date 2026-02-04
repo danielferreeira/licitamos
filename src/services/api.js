@@ -23,8 +23,8 @@ export const api = {
       id, 
       created_at, 
       user_id, 
-      client_documents, // Remove para não tentar salvar a lista junto
-      client_history,   // Remove histórico
+      client_documents, 
+      client_history, 
       ...dataToSave 
     } = client
     
@@ -103,13 +103,13 @@ export const api = {
       .from('clients')
       .select('*', { count: 'exact', head: true })
 
-    // 2. Docs Vencidos (Usando a tabela correta: client_documents)
+    // 2. Docs Vencidos
     const { count: expiredCount } = await supabase
       .from('client_documents')
       .select('*', { count: 'exact', head: true })
       .lt('expiration_date', today)
 
-    // 3. Docs Vencendo (Usando a tabela correta: client_documents)
+    // 3. Docs Vencendo
     const { count: expiringCount } = await supabase
       .from('client_documents')
       .select('*', { count: 'exact', head: true })
@@ -122,45 +122,76 @@ export const api = {
       expiring: expiringCount || 0
     }
   },
+  // --- AGENDA / EVENTOS ---
+  getEvents: async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return [] 
+    
+    // Agora buscamos também os dados do cliente vinculado (clients(company_name))
+    const { data, error } = await supabase
+      .from('events')
+      .select('*, clients(id, company_name)')
+      .order('event_date', { ascending: true })
+      .order('event_time', { ascending: true })
+      
+    if (error) {
+      console.error("Erro ao buscar eventos:", error)
+      throw error
+    }
+    return data
+  },
 
-  // --- LICITAÇÕES (Kanban) ---
+  addEvent: async (eventData) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    // Tratamento para client_id vazio virar null no banco
+    const payload = { ...eventData, user_id: user.id }
+    if (!payload.client_id) delete payload.client_id;
+
+    const { error } = await supabase.from('events').insert([payload])
+    if (error) throw error
+  },
+
+  updateEvent: async (id, eventData) => {
+    // Tratamento para client_id vazio virar null
+    const payload = { ...eventData }
+    if (!payload.client_id) payload.client_id = null;
+
+    const { error } = await supabase.from('events').update(payload).eq('id', id)
+    if (error) throw error
+  },
+
+  deleteEvent: async (id) => {
+    const { error } = await supabase.from('events').delete().eq('id', id)
+    if (error) throw error
+  },
+
+  // --- LICITAÇÕES ---
   getBids: async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return []
-
     const { data, error } = await supabase
       .from('bids')
       .select('*, clients(company_name)')
       .order('deadline', { ascending: true })
-      
     if (error) throw error
     return data
   },
 
   saveBid: async (bid) => {
     const { data: { user } } = await supabase.auth.getUser()
+    const { id, clients, created_at, user_id, ...dataToSave } = bid
     
-    // Removemos 'clients' pois é um objeto de leitura (join), não existe na tabela bids
-    const { 
-      id, 
-      clients, 
-      created_at, 
-      user_id, 
-      ...dataToSave 
-    } = bid
-    
-    // Garante que o valor seja numérico e não string vazia
-    if (dataToSave.value === '') dataToSave.value = 0
+    if (dataToSave.value === '' || dataToSave.value === undefined) dataToSave.value = 0
 
     if (id) {
       return await supabase.from('bids').update(dataToSave).eq('id', id)
     }
-    // No insert, forçamos o user_id do usuário logado
     return await supabase.from('bids').insert([{ ...dataToSave, user_id: user.id }])
   },
 
   deleteBid: async (id) => {
-    return await supabase.from('bids').delete().eq('id', id)
+    const { error } = await supabase.from('bids').delete().eq('id', id)
+    if (error) throw error
   },
   
   updateBidStatus: async (id, newStatus) => {
@@ -172,7 +203,6 @@ export const api = {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
 
-    // Busca apenas status e valor para economizar dados
     const { data, error } = await supabase
       .from('bids')
       .select('status, value')
@@ -187,10 +217,8 @@ export const api = {
     }
 
     data.forEach(bid => {
-      // CORREÇÃO: Usamos 'value' (nome da coluna no banco), não 'amount'
       const val = Number(bid.value) || 0
       
-      // CORREÇÃO: Usamos 'Ganha'/'Perdida' para bater com o Modal
       if (bid.status === 'Ganha') {
         summary.won.value += val
         summary.won.count += 1
@@ -198,7 +226,6 @@ export const api = {
         summary.lost.value += val
         summary.lost.count += 1
       } else {
-        // Todo o resto é potencial (Triagem, Disputa, etc)
         summary.potential.value += val
         summary.potential.count += 1
       }

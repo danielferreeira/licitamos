@@ -1,4 +1,4 @@
-import { LayoutDashboard, Gavel, Settings, LogOut, User, PieChart, FileText } from 'lucide-react'
+import { LayoutDashboard, Gavel, Settings, LogOut, User, PieChart, FileText, Calendar } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
 export function Layout({ children, onNavigate, currentPage }) {
@@ -49,14 +49,17 @@ export function Layout({ children, onNavigate, currentPage }) {
             <a onClick={() => onNavigate('dashboard')} className={getLinkClass('dashboard')}>
               <LayoutDashboard size={20} /> <span className="hidden lg:block">Visão Geral</span>
             </a>
+            <a onClick={() => onNavigate('agenda')} className={getLinkClass('agenda')}>
+              <Calendar size={20} /> <span className="hidden lg:block">Agenda</span>
+            </a>
             <a onClick={() => onNavigate('licitacoes')} className={getLinkClass('licitacoes')}>
               <Gavel size={20} /> <span className="hidden lg:block">Licitações / Funil</span>
             </a>
             <a onClick={() => onNavigate('financeiro')} className={getLinkClass('financeiro')}>
               <PieChart size={20} /> <span className="hidden lg:block">Financeiro</span>
             </a>
-            <a onClick={() => onNavigate('relatorios')} className={getLinkClass('relatorios')}>
-              <FileText size={20} /> <span className="hidden lg:block">Relatórios</span>
+            <a onClick={() => onNavigate('documentos')} className={getLinkClass('documentos')}>
+              <FileText size={20} /> <span className="hidden lg:block">Documentos</span>
             </a>
             <a onClick={() => onNavigate('config')} className={getLinkClass('config')}>
               <Settings size={20} /> <span className="hidden lg:block">Configurações</span>

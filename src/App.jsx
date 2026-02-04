@@ -4,8 +4,9 @@ import { Dashboard } from './pages/Dashboard'
 import { Kanban } from './pages/Kanban'
 import { Login } from './pages/Login'
 import { Financial } from './pages/Financial'
-import { Reports } from './pages/Reports' // Verifique se importou a página de Relatórios
 import { Config } from './pages/Config'
+import { Documents } from './pages/Documents' // Renomeado
+import { Agenda } from './pages/Agenda'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { Toaster, toast } from 'sonner'
@@ -66,9 +67,10 @@ function AppRoutes() {
   return (
     <Layout onNavigate={setCurrentPage} currentPage={currentPage}>
       {currentPage === 'dashboard' && <Dashboard />}
+      {currentPage === 'agenda' && <Agenda />}
       {currentPage === 'licitacoes' && <Kanban />}
       {currentPage === 'financeiro' && <Financial />}
-      {currentPage === 'relatorios' && <Reports />}
+      {currentPage === 'documentos' && <Documents />}
       {currentPage === 'config' && <Config />}
     </Layout>
   )
